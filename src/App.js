@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import './App.css'
-import Web3 from "web3";
+import web3 from './web3';
 import lottery from './Lottery.json'
 
 class App extends Component {
@@ -17,26 +17,10 @@ class App extends Component {
     }
 
     async componentDidMount() {
-      const ganacheURL = "http://127.0.0.1:8545"; // Replace this if Ganache is hosted elsewhere
-      let web3 = new Web3(new Web3.providers.HttpProvider(ganacheURL));
-
-      if (window.ethereum) {
-        web3 = new Web3(window.ethereum);
-        try {
-          await window.ethereum.enable(); // Request account access
-        } catch (error) {
-          console.error("User denied account access");
-        }
-      } else if (window.web3) {
-        web3 = new Web3(window.web3.currentProvider); // Use legacy provider
-      } else {
-        console.error("Non-Ethereum browser detected. Please install MetaMask.");
-        return;
-      }
     
       const accounts = await web3.eth.getAccounts();
       const balance = await web3.eth.getBalance(accounts[0]);
-      const contractAddress = '0x9122285093f21c5b882f5b1cDe38dfD8Dd33e480';
+      const contractAddress = '0xE76591BA999309526D4070ebc1e177Ba8F5f92cC';
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
       console.log(contractInstance)
 
@@ -59,7 +43,7 @@ class App extends Component {
       event.preventDefault();
 
       const web3 = window.web3;
-      const contractAddress = '0x9122285093f21c5b882f5b1cDe38dfD8Dd33e480';
+      const contractAddress = '0xE76591BA999309526D4070ebc1e177Ba8F5f92cC';
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
       const numberP = await contractInstance.methods.getNumberOfParticipants().call();
       console.log(numberP)
