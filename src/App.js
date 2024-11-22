@@ -17,20 +17,25 @@ class App extends Component {
     }
 
     async componentDidMount() {
-    
+
+      console.log("Testing log.............")
       const accounts = await web3.eth.getAccounts();
+      console.log("Account retrieved:" + accounts)
       const balance = await web3.eth.getBalance(accounts[0]);
       const contractAddress = '0xE76591BA999309526D4070ebc1e177Ba8F5f92cC';
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
       console.log(contractInstance)
+      console.log("web3 instance: ", web3);
+      console.log("contractInstance: ", contractInstance);
 
-      const owner = await contractInstance.methods.owner().call();
+      //const owner = await contractInstance.methods.owner().call();
       const players = await contractInstance.methods.getNumberOfParticipants().call();
-  
+      console.log("Number of players: ", players)
+
       this.setState({
         account: accounts[0],
         balance: web3.utils.fromWei(balance, 'ether'),
-        owner: owner,
+       // owner: owner,
         players: players
       });
     }
@@ -42,11 +47,11 @@ class App extends Component {
     handleSubmit = async (event) => {
       event.preventDefault();
 
-      const web3 = window.web3;
+      console.log("Entering handleSubmit...")      
       const contractAddress = '0xE76591BA999309526D4070ebc1e177Ba8F5f92cC';
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
       const numberP = await contractInstance.methods.getNumberOfParticipants().call();
-      console.log(numberP)
+      console.log("In handleSubmit- number of players: ", numberP)
 
       try {
         await contractInstance.methods.enroleInLottery(this.state.name).send({ 
