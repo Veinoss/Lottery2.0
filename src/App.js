@@ -9,34 +9,41 @@ class App extends Component {
       super(props)
       this.state = {
         account:"0x0",
-        balance: "0",
+        balanceInEther: [],
         owner:"",
-        players: [],
+        players: 0,
         value:""
       }
     }
 
-    async componentDidMount() {
-
-      console.log("Testing log.............")
+    async componentDidMount() {      
       const accounts = await web3.eth.getAccounts();
       console.log("Account retrieved:" + accounts)
-      const balance = await web3.eth.getBalance(accounts[0]);
-      const contractAddress = '0xE76591BA999309526D4070ebc1e177Ba8F5f92cC';
-      const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
-      console.log(contractInstance)
-      console.log("web3 instance: ", web3);
+
+      const balances = []
+
+      for (let i = 0; i<10; i++){
+        let wei = await web3.eth.getBalance(accounts[i])
+        balances.push(await web3.utils.fromWei(wei, "ether"));
+      }
+
+      const contractAddress = process.env.REACT_APP_LOTTERY_ADDRESS;
+      console.log("Contract Address: ", contractAddress)
+    
+      const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);            
       console.log("contractInstance: ", contractInstance);
 
-      //const owner = await contractInstance.methods.owner().call();
-      const players = await contractInstance.methods.getNumberOfParticipants().call();
-      console.log("Number of players: ", players)
+      const nbOfPlayers = await contractInstance.methods.getNumberOfParticipants().call();
+      console.log("Number of players: ", nbOfPlayers)
+
+      const owner = await contractInstance.methods.owner().call();
+      console.log("Owner: ", owner)
 
       this.setState({
         account: accounts[0],
-        balance: web3.utils.fromWei(balance, 'ether'),
-       // owner: owner,
-        players: players
+        balanceInEther: balances,
+        owner: owner,
+        players: nbOfPlayers
       });
     }
   
@@ -48,7 +55,7 @@ class App extends Component {
       event.preventDefault();
 
       console.log("Entering handleSubmit...")      
-      const contractAddress = '0xE76591BA999309526D4070ebc1e177Ba8F5f92cC';
+      const contractAddress = process.env.REACT_APP_LOTTERY_ADDRESS;
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
       const numberP = await contractInstance.methods.getNumberOfParticipants().call();
       console.log("In handleSubmit- number of players: ", numberP)
@@ -60,8 +67,15 @@ class App extends Component {
           gas: 3000000, // Set a reasonable gas limit explicitly
           gasPrice: web3.utils.toWei('20', 'gwei'), // Use a fixed legacy gas price
         });
+
+         // Fetching updated contract state
+        const players = await contractInstance.methods.getNumberOfParticipants().call();
+        const balance = await web3.eth.getBalance(this.state.account);
+
         console.log('Transaction successful');
         this.setState({ 
+          players: players,
+          balance: web3.utils.fromWei(balance, 'ether'),
           name: "",
           succesMsg: "Merci! Transaction est un succès 🎉!",
         });
@@ -78,7 +92,15 @@ class App extends Component {
           <br></br>
           <br></br>
           <p>Ton adresse de portefeuille : {this.state.account}</p>
-          <p>Ta balance : {this.state.balance}</p>
+          <p>Balance des 10 accounts : </p>
+            <ul>
+            {this.state.balanceInEther.length > 0 ? (
+              this.state.balanceInEther.map((bal, index) => (
+                <li key={index}>
+                  Compte {index + 1}: {bal} ETH
+                </li>
+              ))) : <li>Erreur: balance indisponible...</li>}
+            </ul>          
           <br></br>
           <br></br>
           <p>Si tu veux participer, entre ton nom et tu seras automatiquement ajouté! Mise est de 1 ether!</p>
