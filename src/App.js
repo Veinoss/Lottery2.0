@@ -8,7 +8,7 @@ class App extends Component {
     constructor(props){
       super(props)
       this.state = {
-        account:"0x0",
+        accounts: [],       
         balanceInEther: [],
         owner:"",
         players: 0,
@@ -16,16 +16,13 @@ class App extends Component {
       }
     }
 
+
+
     async componentDidMount() {      
       const accounts = await web3.eth.getAccounts();
       console.log("Account retrieved:" + accounts)
 
-      const balances = []
-
-      for (let i = 0; i<10; i++){
-        let wei = await web3.eth.getBalance(accounts[i])
-        balances.push(await web3.utils.fromWei(wei, "ether"));
-      }
+      const balances = await this.updateBalances(accounts);
 
       const contractAddress = process.env.REACT_APP_LOTTERY_ADDRESS;
       console.log("Contract Address: ", contractAddress)
@@ -40,7 +37,7 @@ class App extends Component {
       console.log("Owner: ", owner)
 
       this.setState({
-        account: accounts[0],
+        accounts: accounts,        
         balanceInEther: balances,
         owner: owner,
         players: nbOfPlayers
@@ -62,7 +59,7 @@ class App extends Component {
 
       try {
         await contractInstance.methods.enroleInLottery(this.state.name).send({ 
-          from: this.state.account, 
+          from: this.state.accounts[0], 
           value: web3.utils.toWei("1", 'ether'),
           gas: 3000000, // Set a reasonable gas limit explicitly
           gasPrice: web3.utils.toWei('20', 'gwei'), // Use a fixed legacy gas price
@@ -70,12 +67,11 @@ class App extends Component {
 
          // Fetching updated contract state
         const players = await contractInstance.methods.getNumberOfParticipants().call();
-        const balance = await web3.eth.getBalance(this.state.account);
-
+       
         console.log('Transaction successful');
         this.setState({ 
           players: players,
-          balance: web3.utils.fromWei(balance, 'ether'),
+          balanceInEther: await this.updateBalances(this.state.accounts),
           name: "",
           succesMsg: "Merci! Transaction est un succès 🎉!",
         });
@@ -121,6 +117,19 @@ class App extends Component {
         </div>
       )
     }
+
+    async updateBalances(accounts) {
+      const balances = []     
+  
+      for (let i = 0; i<10; i++){
+        let wei = await web3.eth.getBalance(accounts[i])
+        balances.push(await web3.utils.fromWei(wei, "ether"));
+      }
+  
+      return balances
+    }
   }
   
+
+
   export default App;
