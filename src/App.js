@@ -11,8 +11,10 @@ class App extends Component {
         accounts: [],       
         balanceInEther: [],
         owner:"",
-        players: 0,
-        value:""
+        players: "",
+        value:"",
+        selectedAccount: 0,
+        jackpot: ""
       }
     }
 
@@ -57,24 +59,33 @@ class App extends Component {
       const numberP = await contractInstance.methods.getNumberOfParticipants().call();
       console.log("In handleSubmit- number of players: ", numberP)
 
+      const account = await web3.eth.getAccounts();
+
       try {
         await contractInstance.methods.enroleInLottery(this.state.name).send({ 
-          from: this.state.accounts[0], 
+          from: account[0],
           value: web3.utils.toWei("1", 'ether'),
           gas: 3000000, // Set a reasonable gas limit explicitly
           gasPrice: web3.utils.toWei('20', 'gwei'), // Use a fixed legacy gas price
         });
 
          // Fetching updated contract state
-        const players = await contractInstance.methods.getNumberOfParticipants().call();
-       
+        const players = parseInt( await contractInstance.methods.getNumberOfParticipants().call());
+        const newJackpotSize = web3.utils.fromWei(await contractInstance.methods.getJackPot().call(), 'ether');
+        console.log("Jackpot size = : ", newJackpotSize)
+
         console.log('Transaction successful');
         this.setState({ 
           players: players,
           balanceInEther: await this.updateBalances(this.state.accounts),
           name: "",
           succesMsg: "Merci! Transaction est un succès 🎉!",
+          jackpot: newJackpotSize
         });
+
+        console.log("nbOfPlayers from setState = : ", this.state.players)
+        console.log("Jackpot size from setState = : ", this.state.jackpot)
+
       } catch (error) {
         console.error('Error calling enroleInLottery function:', error);
       }
@@ -85,6 +96,9 @@ class App extends Component {
         <div className='text-center' style={{ color: "" }}>
           <h1> Hello! ✌️ Lottery!</h1>
           <h2>Présentement, le nombre de participants est de : {this.state.players}</h2>
+          <br></br>
+          <br></br>
+          <h2>Le jackpot est rendu au montant de: {this.state.jackpot}</h2>
           <br></br>
           <br></br>
           <p>Ton adresse de portefeuille : {this.state.account}</p>
@@ -100,6 +114,13 @@ class App extends Component {
           <br></br>
           <br></br>
           <p>Si tu veux participer, entre ton nom et tu seras automatiquement ajouté! Mise est de 1 ether!</p>
+          <br></br>
+          <form>          
+            <label>Choisissez un compte de (0-9) pour déduire la mise:
+              <input type="text" />
+            </label>
+          </form>
+          <br></br>
           <form onSubmit={this.handleSubmit}>
             <label>
               Nom du participant:
