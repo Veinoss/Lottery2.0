@@ -8,7 +8,7 @@ module.exports = function(deployer) {
       console.log("Deploying Lottery contract");
       await deployer.deploy(Lottery);
       const contractAddress = Lottery.address
-      const envContent = `REACT_APP_LOTTERY_ADDRESS=${contractAddress}\n`;
+      const envContent = `VITE_LOTTERY_ADDRESS=${contractAddress}\n`;
       
       // Resolve the path to the root directory
     const envFilePath = path.resolve(__dirname, '../.env'); 
