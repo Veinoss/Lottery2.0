@@ -29,31 +29,6 @@ services:
     depends_on:
       - ganache
     command: |
-      sh -c "          
-      until grep -q 'VITE_LOTTERY_ADDRESS=' /frontend/.env; do
-        echo 'Waiting for VITE_LOTTERY_ADDRESS to be set in .env...';
-        sleep 3;
-      done;
-      echo 'VITE_LOTTERY_ADDRESS is set!';
-      npm install && npm run dev;     
-      "
-
-  cleaner:
-    image: alpine
-    volumes:
-      - .:/frontend
-    depends_on:
-      - react-app
-    command: |
       sh -c "
-      echo 'Installing curl...';
-      apk add --no-cache curl;
-      echo 'Waiting for React app to start...';
-      until curl -s http://react-app:5173 > /dev/null; do
-        echo 'React app not ready, retrying in 3 seconds...';
-        sleep 3;
-      done;
-      echo 'React app is up! Cleaning .env...';
-      sed -i '/^VITE_LOTTERY_ADDRESS=/d' ./frontend/.env;
-      echo 'Cleanup complete.';
+      npm install && npm run dev;     
       "

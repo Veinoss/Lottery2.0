@@ -14,7 +14,7 @@ class App extends Component {
         players: "",
         value:"",
         selectedAccount: 0,
-        jackpot: ""
+        jackpot: "",
       }
     }
 
@@ -96,7 +96,6 @@ class App extends Component {
         <div className='text-center' style={{ color: "" }}>
           <h1> Hello! ✌️ Lottery!</h1>
           <h2>Présentement, le nombre de participants est de : {this.state.players}</h2>
-          <br></br>
           <br></br>
           <h2>Le jackpot est rendu au montant de: {this.state.jackpot}</h2>
           <br></br>
