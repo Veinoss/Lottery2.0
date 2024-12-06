@@ -1,13 +1,15 @@
 services:
   ganache:
-    image: trufflesuite/ganache-cli
+    build:
+      context: .
+      dockerfile: Dockerfile.ganache
     ports:
       - "8545:8545"
-    command: ["--host", "0.0.0.0", "--accounts", "10", "--defaultBalanceEther", "1000"]
 
   truffle:
-    image: node:18
-    working_dir: /app
+    build:
+      context: .
+      dockerfile: Docker.truffle
     volumes:
       - .:/app
     depends_on:
@@ -15,7 +17,6 @@ services:
     environment:
       - NETWORK=development
       - HOST=http://ganache:8545
-    command: sh -c "npm install -g truffle && truffle compile --config truffle-config.cjs && truffle migrate --network development --config truffle-config.cjs"
 
   react-app:
     image: node:18

@@ -1,0 +1,7 @@
+FROM trufflesuite/ganache-cli:latest
+
+# Expose the default port
+EXPOSE 8545
+
+# Default command to run Ganache with options
+CMD ["--host", "0.0.0.0", "--accounts", "10", "--defaultBalanceEther", "1000"]
