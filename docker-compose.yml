@@ -9,7 +9,8 @@ services:
   truffle:
     build:
       context: .
-      dockerfile: Docker.truffle
+      dockerfile: Dockerfile.truffle
+    working_dir: /app
     volumes:
       - .:/app
     depends_on:
@@ -17,6 +18,8 @@ services:
     environment:
       - NETWORK=development
       - HOST=http://ganache:8545
+    # Just keep the container running, don't execute Truffle
+    command: tail -f /dev/null
 
   react-app:
     image: node:18
