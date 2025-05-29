@@ -9,11 +9,13 @@ import './StyledAccountSelect.css';
 interface ParticipationFormProps {
   selectedAccount: string | number;
   participantName: string;
+  betAmount: string;
   balances: string[];
   isLoading: boolean;
   successMessage: string;
   onAccountChange: (value: string) => void;
   onNameChange: (value: string) => void;
+  onBetAmountChange: (value: string) => void;
   onSubmit: () => Promise<void>;
 }
 
@@ -27,8 +29,16 @@ interface ParticipantInputProps {
   onChange: (value: string) => void;
 }
 
+interface BetAmountInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  selectedAccount: string | number;
+  balances: string[];
+}
+
 interface SubmitButtonProps {
   isLoading: boolean;
+  betAmount: string;
   onClick: () => void;
 }
 
@@ -60,13 +70,138 @@ const ParticipantInput: React.FC<ParticipantInputProps> = ({ value, onChange }) 
   );
 };
 
-const InfoBox: React.FC = () => (
-  <div className="info-box">
-    <strong>💡 Mise requise: 1 ETH</strong>
-  </div>
-);
+const BetAmountInput: React.FC<BetAmountInputProps> = ({ 
+  value, 
+  onChange, 
+  selectedAccount, 
+  balances 
+}) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    
+    // Permettre seulement les nombres et les points décimaux
+    if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
+      onChange(newValue);
+    }
+  };
 
-const SubmitButton: React.FC<SubmitButtonProps> = ({ isLoading, onClick }) => (
+  // Calculer le solde disponible pour le compte sélectionné
+  const getAvailableBalance = (): string => {
+    if (selectedAccount === '' || !balances) return '0';
+    const accountIndex = typeof selectedAccount === 'string' ? parseInt(selectedAccount) : selectedAccount;
+    return balances[accountIndex] || '0';
+  };
+
+  const availableBalance = getAvailableBalance();
+  const currentBet = parseFloat(value) || 0;
+  const balance = parseFloat(availableBalance) || 0;
+  const isValidAmount = currentBet >= 1 && currentBet <= balance;
+  const isInsufficientFunds = currentBet > balance;
+
+  return (
+    <div className="bet-amount-container">
+      <div className="bet-input-wrapper">
+        <input 
+          type="text" 
+          className={`form-input bet-input ${
+            value && !isValidAmount ? 'error' : ''
+          } ${
+            value && isValidAmount ? 'valid' : ''
+          }`}
+          name="betAmount"
+          value={value}
+          onChange={handleChange}
+          placeholder="1.0"
+          min="1"
+          step="0.1"
+        />
+        <span className="currency-label">ETH</span>
+      </div>
+      
+      <div className="bet-info">
+        <div className="balance-info">
+          <span className="balance-text">
+            Solde: <strong>{parseFloat(availableBalance).toFixed(4)} ETH</strong>
+          </span>
+        </div>
+        
+        {value && (
+          <div className={`validation-message ${isValidAmount ? 'valid' : 'error'}`}>
+            {currentBet < 1 ? (
+              <span>❌ Minimum 1 ETH</span>
+            ) : isInsufficientFunds ? (
+              <span>❌ Solde insuffisant</span>
+            ) : (
+              <span>✅ Montant valide</span>
+            )}
+          </div>
+        )}
+      </div>
+      
+      {selectedAccount !== '' && (
+        <div className="quick-amounts">
+          <span className="quick-label">Mise rapide:</span>
+          <div className="quick-buttons">
+            <button 
+              type="button" 
+              className="quick-btn"
+              onClick={() => onChange('1')}
+            >
+              1 ETH
+            </button>
+            <button 
+              type="button" 
+              className="quick-btn"
+              onClick={() => onChange('5')}
+              disabled={balance < 5}
+            >
+              5 ETH
+            </button>
+            <button 
+              type="button" 
+              className="quick-btn"
+              onClick={() => onChange('10')}
+              disabled={balance < 10}
+            >
+              10 ETH
+            </button>
+            {balance > 20 && (
+              <button 
+                type="button" 
+                className="quick-btn max-btn"
+                onClick={() => onChange(Math.floor(balance * 0.9).toString())}
+              >
+                Max
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const InfoBox: React.FC<{ betAmount: string }> = ({ betAmount }) => {
+  const amount = parseFloat(betAmount) || 1;
+  
+  return (
+    <div className="info-box enhanced">
+      <div className="info-row">
+        <span className="info-label">💰 Votre mise:</span>
+        <span className="info-value">{amount.toFixed(2)} ETH</span>
+      </div>
+      <div className="info-row">
+        <span className="info-label">🎯 Gain potentiel:</span>
+        <span className="info-value">Jackpot total</span>
+      </div>
+      <div className="info-note">
+        <strong>🔒 Mise minimum: 1 ETH</strong>
+      </div>
+    </div>
+  );
+};
+
+const SubmitButton: React.FC<SubmitButtonProps> = ({ isLoading, betAmount, onClick }) => (
   <button 
     type="submit" 
     className={`participate-btn ${isLoading ? 'loading' : ''}`}
@@ -82,7 +217,9 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({ isLoading, onClick }) => (
         Transaction en cours...
       </>
     ) : (
-      '🚀 Participer Maintenant!'
+      <>
+        🚀 Miser {parseFloat(betAmount) || 1} ETH
+      </>
     )}
   </button>
 );
@@ -103,11 +240,13 @@ const Message: React.FC<MessageProps> = ({ message }) => {
 const ParticipationForm: React.FC<ParticipationFormProps> = ({
   selectedAccount,
   participantName,
+  betAmount,
   balances,
   isLoading,
   successMessage,
   onAccountChange,
   onNameChange,
+  onBetAmountChange,
   onSubmit
 }) => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -134,10 +273,20 @@ const ParticipationForm: React.FC<ParticipationFormProps> = ({
           />
         </FormGroup>
         
-        <InfoBox />
+        <FormGroup label="Montant de la mise">
+          <BetAmountInput
+            value={betAmount}
+            onChange={onBetAmountChange}
+            selectedAccount={selectedAccount}
+            balances={balances}
+          />
+        </FormGroup>
+        
+        <InfoBox betAmount={betAmount} />
         
         <SubmitButton 
           isLoading={isLoading}
+          betAmount={betAmount}
           onClick={onSubmit}
         />
         

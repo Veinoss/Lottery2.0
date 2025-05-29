@@ -50,6 +50,7 @@ class App extends Component<AppPropsInterface, AppState> {
       selectedAccount: "",
       jackpot: "",
       name: "",
+      betAmount: "1", // Nouveau: montant de la mise (minimum 1 ETH)
       succesMsg: "",
       isLoading: false,
       particles: []
@@ -113,13 +114,47 @@ class App extends Component<AppPropsInterface, AppState> {
   };
 
   /**
+   * Gère les changements du montant de la mise
+   */
+  private handleBetAmountChange = (betAmount: string): void => {
+    // Validation en temps réel du format numérique
+    if (betAmount === '' || /^\d*\.?\d*$/.test(betAmount)) {
+      this.setState({ betAmount });
+    }
+  };
+
+  /**
    * Valide les données du formulaire avant soumission
    */
   private validateForm(): boolean {
-    if (!this.state.name || this.state.selectedAccount === '') {
+    const { name, selectedAccount, betAmount, accounts, balanceInEther } = this.state;
+
+    if (!name || selectedAccount === '') {
       this.showMessage("⚠️ Veuillez remplir tous les champs!", 3000);
       return false;
     }
+
+    if (!betAmount || betAmount === '') {
+      this.showMessage("⚠️ Veuillez saisir un montant!", 3000);
+      return false;
+    }
+
+    const betAmountFloat = parseFloat(betAmount);
+    
+    if (isNaN(betAmountFloat) || betAmountFloat < 1) {
+      this.showMessage("⚠️ Le montant minimum est de 1 ETH!", 3000);
+      return false;
+    }
+
+    // Vérifier que l'utilisateur a suffisamment de fonds
+    const accountIndex = typeof selectedAccount === 'string' ? parseInt(selectedAccount) : selectedAccount;
+    const accountBalance = balanceInEther[accountIndex];
+    
+    if (accountBalance && parseFloat(accountBalance) < betAmountFloat) {
+      this.showMessage("⚠️ Solde insuffisant pour cette mise!", 3000);
+      return false;
+    }
+
     return true;
   }
 
@@ -161,7 +196,12 @@ class App extends Component<AppPropsInterface, AppState> {
       throw new Error("Invalid account selected");
     }
 
-    await this.lotteryService.enrollParticipant(this.state.name, selectedAccount);
+    // Passer le montant de la mise au service
+    await this.lotteryService.enrollParticipant(
+      this.state.name, 
+      selectedAccount, 
+      this.state.betAmount
+    );
   }
 
   /**
@@ -189,14 +229,16 @@ class App extends Component<AppPropsInterface, AppState> {
     this.setState({ 
       name: "",
       selectedAccount: "",
+      betAmount: "1", // Réinitialiser à la mise minimum
       isLoading: false
     });
 
-    this.showMessage("🎉 Merci! Transaction réussie! Bonne chance!", 5000);
+    this.showMessage(`🎉 Merci! Mise de ${this.state.betAmount} ETH effectuée! Bonne chance!`, 5000);
     
     // Log pour debugging
     console.log("Transaction successful - Players:", this.state.players);
     console.log("Transaction successful - Jackpot:", this.state.jackpot);
+    console.log("Transaction successful - Bet Amount:", this.state.betAmount);
   }
 
   /**
@@ -257,11 +299,13 @@ class App extends Component<AppPropsInterface, AppState> {
             <ParticipationForm
               selectedAccount={this.state.selectedAccount}
               participantName={this.state.name}
+              betAmount={this.state.betAmount}
               balances={this.state.balanceInEther}
               isLoading={this.state.isLoading}
               successMessage={this.state.succesMsg}
               onAccountChange={this.handleAccountChange}
               onNameChange={this.handleNameChange}
+              onBetAmountChange={this.handleBetAmountChange}
               onSubmit={this.handleParticipationSubmit}
             />
           </div>

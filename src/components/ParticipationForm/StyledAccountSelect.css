@@ -534,3 +534,439 @@
     display: none;
   }
 }
+
+/* =========================
+   BET AMOUNT INPUT STYLES
+   ========================= */
+
+.bet-amount-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bet-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.bet-input {
+  width: 100%;
+  padding: 1.2rem 4rem 1.2rem 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-align: left;
+}
+
+.bet-input:focus {
+  outline: none;
+  border-color: var(--gold-color, #FFD700);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.bet-input.valid {
+  border-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.bet-input.error {
+  border-color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.currency-label {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+/* =========================
+   BET INFO SECTION
+   ========================= */
+
+.bet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.balance-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.balance-text strong {
+  color: #FFD700;
+  font-weight: 700;
+}
+
+.validation-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.validation-message.valid {
+  color: #4CAF50;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.validation-message.error {
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+}
+
+/* =========================
+   QUICK AMOUNTS SECTION
+   ========================= */
+
+.quick-amounts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.quick-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quick-btn {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.4s ease;
+}
+
+.quick-btn:hover::before {
+  left: 100%;
+}
+
+.quick-btn:hover:not(:disabled) {
+  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.quick-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.quick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.quick-btn.max-btn {
+  border-color: rgba(255, 165, 0, 0.4);
+  background: rgba(255, 165, 0, 0.1);
+  color: #FFA500;
+}
+
+.quick-btn.max-btn:hover:not(:disabled) {
+  border-color: #FFA500;
+  background: rgba(255, 165, 0, 0.2);
+  color: #FFD700;
+}
+
+/* =========================
+   ENHANCED INFO BOX
+   ========================= */
+
+.info-box.enhanced {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-box.enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+  opacity: 0.6;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.info-row:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.info-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.info-note {
+  text-align: center;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* =========================
+   UPDATED BUTTON STYLES
+   ========================= */
+
+.participate-btn {
+  width: 100%;
+  padding: 1.2rem 2rem;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.participate-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.participate-btn:hover::before {
+  left: 100%;
+}
+
+.participate-btn:hover:not(:disabled) {
+  background: linear-gradient(45deg, #5a67d8, #6b46c1);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.participate-btn:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.participate-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.participate-btn.loading {
+  background: linear-gradient(45deg, #4a5568, #2d3748);
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+   ========================= */
+
+@media (max-width: 768px) {
+  .bet-input {
+    padding: 1rem 3.5rem 1rem 1.2rem;
+    font-size: 1rem;
+  }
+  
+  .currency-label {
+    right: 1.2rem;
+    font-size: 1rem;
+  }
+  
+  .quick-buttons {
+    gap: 0.4rem;
+  }
+  
+  .quick-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .info-box.enhanced {
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bet-amount-container {
+    gap: 0.8rem;
+  }
+  
+  .quick-buttons {
+    justify-content: center;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .info-value {
+    align-self: flex-end;
+  }
+}
+
+/* =========================
+   ACCESSIBILITY
+   ========================= */
+
+.bet-input:focus-visible {
+  outline: 2px solid var(--gold-color, #FFD700);
+  outline-offset: 2px;
+}
+
+.quick-btn:focus-visible {
+  outline: 2px solid var(--gold-color, #FFD700);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .bet-input,
+  .quick-btn {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .validation-message.valid {
+    background: rgba(76, 175, 80, 0.3);
+  }
+  
+  .validation-message.error {
+    background: rgba(255, 68, 68, 0.3);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .bet-input,
+  .quick-btn,
+  .participate-btn {
+    transition: none;
+  }
+  
+  .bet-input.error {
+    animation: none;
+  }
+  
+  .bet-input::before,
+  .quick-btn::before,
+  .participate-btn::before {
+    display: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+}

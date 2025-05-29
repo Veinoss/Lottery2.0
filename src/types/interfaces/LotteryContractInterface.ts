@@ -11,6 +11,7 @@ interface LotteryContractInterface {
       call(): Promise<string>;
     };
     enroleInLottery(name: string): {
+      estimateGas(arg0: { from: string; value: string; }): unknown;
       send(options: {
         from: string;
         value: string;
