@@ -254,10 +254,44 @@ const ParticipationForm: React.FC<ParticipationFormProps> = ({
     await onSubmit();
   };
 
+  // Logique de validation progressive
+  const isAccountSelected = selectedAccount !== '';
+  const isNameFilled = participantName.trim() !== '';
+  const isBetAmountValid = parseFloat(betAmount) >= 1;
+
+  // Messages d'encouragement
+  const getProgressMessage = () => {
+    if (!isAccountSelected) {
+      return "👆 Commencez par sélectionner votre compte";
+    }
+    if (!isNameFilled) {
+      return "✨ Parfait! Maintenant entrez votre nom";
+    }
+    if (!isBetAmountValid) {
+      return "💰 Super! Choisissez maintenant votre mise";
+    }
+    return "🚀 Tout est prêt! Vous pouvez participer";
+  };
+
   return (
     <div className="panel">
       <h3>🎫 Participer à la Loterie</h3>
+      
+      {/* Indicateur de progression */}
+      <div className="progress-indicator">
+        <div className="progress-message">
+          {getProgressMessage()}
+        </div>
+        <div className="progress-steps">
+          <div className={`step ${isAccountSelected ? 'completed' : 'current'}`}>1</div>
+          <div className={`step ${isNameFilled ? 'completed' : isAccountSelected ? 'current' : 'pending'}`}>2</div>
+          <div className={`step ${isBetAmountValid ? 'completed' : isNameFilled ? 'current' : 'pending'}`}>3</div>
+          <div className={`step ${isBetAmountValid ? 'current' : 'pending'}`}>4</div>
+        </div>
+      </div>
+
       <form className="participation-form" onSubmit={handleSubmit}>
+        {/* ÉTAPE 1 : Sélection du compte (toujours visible) */}
         <FormGroup label="Choisir un compte (0-9)">
           <StyledAccountSelect 
             selectedAccount={selectedAccount}
@@ -266,30 +300,46 @@ const ParticipationForm: React.FC<ParticipationFormProps> = ({
           />
         </FormGroup>
         
-        <FormGroup label="Nom du participant">
-          <ParticipantInput 
-            value={participantName}
-            onChange={onNameChange}
-          />
-        </FormGroup>
+        {/* ÉTAPE 2 : Nom du participant (visible si compte sélectionné) */}
+        {isAccountSelected && (
+          <div className="form-step fade-in">
+            <FormGroup label="Nom du participant">
+              <ParticipantInput 
+                value={participantName}
+                onChange={onNameChange}
+              />
+            </FormGroup>
+          </div>
+        )}
         
-        <FormGroup label="Montant de la mise">
-          <BetAmountInput
-            value={betAmount}
-            onChange={onBetAmountChange}
-            selectedAccount={selectedAccount}
-            balances={balances}
-          />
-        </FormGroup>
+        {/* ÉTAPE 3 : Montant de la mise (visible si nom rempli) */}
+        {isAccountSelected && isNameFilled && (
+          <div className="form-step fade-in">
+            <FormGroup label="Montant de la mise">
+              <BetAmountInput
+                value={betAmount}
+                onChange={onBetAmountChange}
+                selectedAccount={selectedAccount}
+                balances={balances}
+              />
+            </FormGroup>
+          </div>
+        )}
         
-        <InfoBox betAmount={betAmount} />
+        {/* ÉTAPE 4 : Résumé et soumission (visible si tout est valide) */}
+        {isAccountSelected && isNameFilled && isBetAmountValid && (
+          <div className="form-step fade-in">
+            <InfoBox betAmount={betAmount} />
+            
+            <SubmitButton 
+              isLoading={isLoading}
+              betAmount={betAmount}
+              onClick={onSubmit}
+            />
+          </div>
+        )}
         
-        <SubmitButton 
-          isLoading={isLoading}
-          betAmount={betAmount}
-          onClick={onSubmit}
-        />
-        
+        {/* Messages de succès/erreur (toujours visibles si présents) */}
         <Message message={successMessage} />
       </form>
     </div>
