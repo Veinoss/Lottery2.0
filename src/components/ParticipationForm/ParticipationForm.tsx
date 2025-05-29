@@ -1,4 +1,6 @@
 import React, { ChangeEvent, FormEvent } from 'react';
+import StyledAccountSelect from './StyledAccountSelect';
+import './StyledAccountSelect.css';
 
 /**
  * Composant ParticipationForm - Responsable du formulaire de participation
@@ -18,12 +20,6 @@ interface ParticipationFormProps {
 interface FormGroupProps {
   label: string;
   children: React.ReactNode;
-}
-
-interface AccountSelectProps {
-  selectedAccount: string | number;
-  balances: string[];
-  onChange: (value: string) => void;
 }
 
 interface ParticipantInputProps {
@@ -46,32 +42,6 @@ const FormGroup: React.FC<FormGroupProps> = ({ label, children }) => (
     {children}
   </div>
 );
-
-const AccountSelect: React.FC<AccountSelectProps> = ({ selectedAccount, balances, onChange }) => {
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value);
-  };
-
-  const formatBalance = (balance: string): string => {
-    return parseFloat(balance).toFixed(4);
-  };
-
-  return (
-    <select 
-      className="form-input"
-      name="selectedAccount"
-      value={selectedAccount}
-      onChange={handleChange}
-    >
-      <option value="">Sélectionnez votre compte...</option>
-      {[...Array(10)].map((_, i: number) => (
-        <option key={i} value={i}>
-          Compte {i + 1} - {balances[i] ? formatBalance(balances[i]) : '...'} ETH
-        </option>
-      ))}
-    </select>
-  );
-};
 
 const ParticipantInput: React.FC<ParticipantInputProps> = ({ value, onChange }) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -150,7 +120,7 @@ const ParticipationForm: React.FC<ParticipationFormProps> = ({
       <h3>🎫 Participer à la Loterie</h3>
       <form className="participation-form" onSubmit={handleSubmit}>
         <FormGroup label="Choisir un compte (0-9)">
-          <AccountSelect 
+          <StyledAccountSelect 
             selectedAccount={selectedAccount}
             balances={balances}
             onChange={onAccountChange}
