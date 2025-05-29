@@ -1,57 +1,14 @@
-import React, { Component, ChangeEvent, FormEvent } from "react";
-import './App.css';
+import { Component, ChangeEvent, FormEvent } from "react";
+import './assets/App.css';
 import web3 from './web3';
 import lottery from './Lottery.json';
+import AppPropsInterface from "./types/interfaces/AppPropsInterface";
+import AppState from './types/AppState';
+import Particule from './types/Particule';
+import LotteryContractInterface from './types/interfaces/LotteryContractInterface';
 
-// Types et interfaces
-interface Particle {
-  id: number;
-  left: number;
-  delay: number;
-  duration: number;
-}
-
-interface AppState {
-  accounts: string[];
-  balanceInEther: string[];
-  owner: string;
-  players: string | number;
-  value: string;
-  selectedAccount: string | number;
-  jackpot: string | number;
-  name: string;
-  succesMsg: string;
-  isLoading: boolean;
-  particles: Particle[];
-}
-
-interface AppProps {}
-
-// Interface pour le contrat Web3
-interface LotteryContract {
-  methods: {
-    getNumberOfParticipants(): {
-      call(): Promise<string>;
-    };
-    owner(): {
-      call(): Promise<string>;
-    };
-    getJackPot(): {
-      call(): Promise<string>;
-    };
-    enroleInLottery(name: string): {
-      send(options: {
-        from: string;
-        value: string;
-        gas: number;
-        gasPrice: string;
-      }): Promise<any>;
-    };
-  };
-}
-
-class App extends Component<AppProps, AppState> {
-  constructor(props: AppProps) {
+class App extends Component<AppPropsInterface, AppState> {
+  constructor(props: AppPropsInterface) {
     super(props);
     this.state = {
       accounts: [],       
@@ -83,10 +40,10 @@ class App extends Component<AppProps, AppState> {
         return;
       }
     
-      const contractInstance: LotteryContract = new web3.eth.Contract(
+      const contractInstance: LotteryContractInterface = new web3.eth.Contract(
         lottery.abi, 
         contractAddress
-      ) as LotteryContract;            
+      ) as LotteryContractInterface;            
       console.log("contractInstance: ", contractInstance);
 
       const nbOfPlayers: string = await contractInstance.methods.getNumberOfParticipants().call();
@@ -117,7 +74,7 @@ class App extends Component<AppProps, AppState> {
   }
 
   createParticles = (): void => {
-    const particles: Particle[] = [];
+    const particles: Particule[] = [];
     for (let i = 0; i < 15; i++) {
       particles.push({
         id: i,
@@ -159,10 +116,10 @@ class App extends Component<AppProps, AppState> {
       return;
     }
 
-    const contractInstance: LotteryContract = new web3.eth.Contract(
+    const contractInstance: LotteryContractInterface = new web3.eth.Contract(
       lottery.abi, 
       contractAddress
-    ) as LotteryContract;
+    ) as LotteryContractInterface;
     
     const numberP: string = await contractInstance.methods.getNumberOfParticipants().call();
     console.log("In handleSubmit- number of players: ", numberP);
@@ -238,7 +195,7 @@ class App extends Component<AppProps, AppState> {
         <div className="background-animation"></div>
         
         <div className="floating-particles">
-          {this.state.particles.map((particle: Particle) => (
+          {this.state.particles.map((particle: Particule) => (
             <div
               key={particle.id}
               className="particle"
