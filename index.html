@@ -1,13 +1,60 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>🎰 Crypto Lottery</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎰</text></svg>">
+    
+    <!-- Meta tags pour SEO -->
+    <meta name="description" content="Participez à la loterie décentralisée la plus excitante du Web3! Gagnez des ETH en toute transparence." />
+    <meta name="keywords" content="crypto, lottery, loterie, blockchain, ethereum, web3, décentralisé" />
+    <meta name="author" content="Crypto Lottery DApp" />
+    
+    <link rel="stylesheet" href="./src/assets/index.css" />
   </head>
   <body>
+    <!-- Écran de chargement -->
+    <div class="loading-screen" id="loadingScreen">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">🎰 Chargement de la loterie...</div>
+    </div>
+
+    <!-- Container principal de l'application React -->
     <div id="root"></div>
+
+    <!-- Scripts -->
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Script pour gérer l'écran de chargement -->
+    <script>
+      // Cache l'écran de chargement une fois que l'app est prête
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          document.body.classList.add('loaded');
+        }, 1000); // Délai pour une transition fluide
+      });
+      
+      // Gestion d'erreur globale
+      window.addEventListener('error', function(e) {
+        console.error('Erreur dans l\'application:', e.error);
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          loadingScreen.innerHTML = `
+            <div style="text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+              <div style="color: #ff6b6b; font-size: 1.2rem; margin-bottom: 1rem;">
+                Erreur de chargement
+              </div>
+              <div style="color: rgba(255,255,255,0.8); font-size: 1rem;">
+                Veuillez recharger la page
+              </div>
+            </div>
+          `;
+        }
+      });
+    </script>
   </body>
 </html>

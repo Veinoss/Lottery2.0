@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-
 contract Lottery {
     address public owner;
     uint256 private jackPotOdds = 10;
@@ -45,7 +44,7 @@ contract Lottery {
     }
 
     function enroleInLottery(string memory playerName) public payable {
-       require(msg.value == 1 ether);
+       require(msg.value >= 1 ether);
        require(bytes(playerName).length > 0);
        require(players.length < 10);
         
