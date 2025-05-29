@@ -18,8 +18,8 @@ services:
     environment:
       - NETWORK=development
       - HOST=http://ganache:8545
-    # Just keep the container running, don't execute Truffle
-    command: tail -f /dev/null
+    # Deploy contracts then keep the container running
+    command: sh -c "truffle migrate --network development && tail -f /dev/null"
 
   react-app:
     image: node:18
@@ -29,10 +29,8 @@ services:
     volumes:
       - .env:/frontend/.env
       - .:/frontend
-      - /frontend/node_modules
+      - /frontend/node_modules   
     depends_on:
       - ganache
-    command: |
-      sh -c "
-      npm install && npm run dev;     
-      "
+      - truffle
+    command: sh -c "npm install && npm run dev"
