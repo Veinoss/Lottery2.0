@@ -14,7 +14,7 @@ class App extends Component {
         players: "",
         value:"",
         selectedAccount: 0,
-        jackpot: ""
+        jackpot: "",
       }
     }
 
@@ -26,7 +26,7 @@ class App extends Component {
 
       const balances = await this.updateBalances(accounts);
 
-      const contractAddress = process.env.REACT_APP_LOTTERY_ADDRESS;
+      const contractAddress = import.meta.env.VITE_LOTTERY_ADDRESS;
       console.log("Contract Address: ", contractAddress)
     
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);            
@@ -54,7 +54,7 @@ class App extends Component {
       event.preventDefault();
 
       console.log("Entering handleSubmit...")      
-      const contractAddress = process.env.REACT_APP_LOTTERY_ADDRESS;
+      const contractAddress = import.meta.env.VITE_LOTTERY_ADDRESS;
       const contractInstance = new web3.eth.Contract(lottery.abi, contractAddress);
       const numberP = await contractInstance.methods.getNumberOfParticipants().call();
       console.log("In handleSubmit- number of players: ", numberP)
@@ -96,7 +96,6 @@ class App extends Component {
         <div className='text-center' style={{ color: "" }}>
           <h1> Hello! ✌️ Lottery!</h1>
           <h2>Présentement, le nombre de participants est de : {this.state.players}</h2>
-          <br></br>
           <br></br>
           <h2>Le jackpot est rendu au montant de: {this.state.jackpot}</h2>
           <br></br>
