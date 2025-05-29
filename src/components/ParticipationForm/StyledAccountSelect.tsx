@@ -187,14 +187,14 @@ const StyledAccountSelect: React.FC<AccountSelectProps> = ({
                 </div>
                 
                 {/* Indicateur de suffisance des fonds */}
-                <div className={`balance-bar ${parseFloat(option.balance) >= 1 ? 'sufficient' : 'insufficient'}`}>
+                {/* <div className={`balance-bar ${parseFloat(option.balance) >= 1 ? 'sufficient' : 'insufficient'}`}>
                   <div 
                     className="balance-fill" 
                     style={{ 
                       width: `${Math.min((parseFloat(option.balance) / 1000) * 100, 100)}%` 
                     }}
                   ></div>
-                </div>
+                </div> */}
               </button>
             ))}
           </div>
